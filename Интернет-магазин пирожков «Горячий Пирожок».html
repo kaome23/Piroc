@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Горячий Пирожок — Свежая Домашняя Выпечка</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bakery: {
+                            50: '#fffbeed6',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            500: '#d97706',
+                            600: '#b45309',
+                            800: '#78350f',
+                            900: '#451a03',
+                        },
+                        crust: {
+                            light: '#fdf8f0',
+                            accent: '#ea580c',
+                            dark: '#292524'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-crust-light text-stone-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center text-white text-2xl shadow-md group-hover:scale-105 transition duration-300">
+                    <i class="fa-solid font-bold fa-bread-slice"></i>
+                </div>
+                <div>
+                    <span class="font-serif text-xl sm:text-2xl font-bold text-stone-900 tracking-tight block leading-none">Горячий Пирожок</span>
+                    <span class="text-xs text-amber-600 font-semibold uppercase tracking-wider">Пекарня & Доставка</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 text-stone-400"></i>
+                <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Поиск пирожков (мясо, вишня, картошка)..." class="w-full pl-11 pr-4 py-2.5 rounded-full bg-amber-50/50 border border-amber-200/80 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition text-sm">
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <a href="#reviews" class="hidden sm:flex items-center gap-2 text-stone-600 hover:text-amber-600 font-medium text-sm px-3 py-2 rounded-xl hover:bg-amber-50 transition">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span>Отзывы</span>
+                </a>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCartModal()" class="relative bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-full font-medium text-sm shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600 transition flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping text-base"></i>
+                    <span class="hidden sm:inline">Корзина</span>
+                    <span id="cartCountBadge" class="bg-white text-orange-600 text-xs font-bold px-2 py-0.5 rounded-full shadow-inner">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Search -->
+        <div class="px-4 pb-3 md:hidden">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-stone-400"></i>
+                <input type="text" id="mobileSearchInput" oninput="syncMobileSearch()" placeholder="Поиск пирожков..." class="w-full pl-11 pr-4 py-2 rounded-full bg-amber-50/50 border border-amber-200 focus:bg-white focus:outline-none text-sm">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- HERO SECTION -->
+        <section class="relative bg-gradient-to-br from-amber-900 via-stone-900 to-amber-950 text-white overflow-hidden py-12 lg:py-20">
+            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                
+                <div class="space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 px-4 py-1.5 rounded-full text-amber-300 text-xs sm:text-sm font-medium">
+                        <i class="fa-solid fa-fire text-orange-400"></i> Только из печи — выпекаем каждые 30 минут!
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold leading-tight tracking-tight">
+                        Настоящие домашние пирожки с <span class="text-amber-400 italic">душой</span>
+                    </h1>
+                    <p class="text-stone-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light">
+                        Пышное тесто, много начинк и только натуральные свежие ингредиенты. Доставим горячими прямо к вашему столу!
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#catalog" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-8 py-3.5 rounded-full shadow-lg hover:shadow-amber-500/25 transition transform active:scale-95 text-base">
+                            Выбрать пирожки
+                        </a>
+                        <div class="flex items-center gap-3 text-left pl-2">
+                            <div class="flex -space-x-2">
+                                <img class="w-10 h-10 rounded-full border-2 border-amber-900 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="User">
+                                <img class="w-10 h-10 rounded-full border-2 border-amber-900 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="User">
+                                <img class="w-10 h-10 rounded-full border-2 border-amber-900 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="User">
+                            </div>
+                            <div>
+                                <div class="flex text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="text-xs text-stone-300 font-medium">1,200+ довольных клиентов</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banner Image Showcase -->
+                <div class="relative flex justify-center">
+                    <div class="relative w-full max-w-md lg:max-w-lg aspect-square rounded-3xl overflow-hidden shadow-2xl border-4 border-amber-500/30">
+                        <img src="https://images.unsplash.com/photo-1621236378699-8597faf6a145?auto=format&fit=crop&w=1000&q=80" alt="Горячие румяные пирожки" class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
+                            <span class="bg-orange-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full w-max mb-2">Хит продаж</span>
+                            <h3 class="text-2xl font-serif font-bold">Фирменные пирожки с мясом</h3>
+                            <p class="text-amber-200 text-sm">Сочная говядина, лук и пряные специи</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CATALOG SECTION -->
+        <section id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900">Наше Аппетитное Меню</h2>
+                    <p class="text-stone-600 mt-2">Выберите любимую выпечку с румяной корочкой</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 bg-amber-100/60 p-1.5 rounded-2xl border border-amber-200/80">
+                    <button onclick="setCategory('all')" id="btn-all" class="cat-btn bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-sm transition">Все</button>
+                    <button onclick="setCategory('savory')" id="btn-savory" class="cat-btn text-stone-700 hover:text-stone-900 px-5 py-2 rounded-xl text-sm font-semibold transition">Сытные</button>
+                    <button onclick="setCategory('sweet')" id="btn-sweet" class="cat-btn text-stone-700 hover:text-stone-900 px-5 py-2 rounded-xl text-sm font-semibold transition">Сладкие</button>
+                    <button onclick="setCategory('veggie')" id="btn-veggie" class="cat-btn text-stone-700 hover:text-stone-900 px-5 py-2 rounded-xl text-sm font-semibold transition">Вегетарианские</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Javascript will inject products here -->
+            </div>
+            
+            <div id="noResults" class="hidden text-center py-16">
+                <i class="fa-solid fa-cookie-bite text-5xl text-amber-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-stone-700">Ничего не найдено</h3>
+                <p class="text-stone-500 mt-1">Попробуйте изменить категорию или поисковый запрос</p>
+            </div>
+        </section>
+
+        <!-- REVIEWS SECTION -->
+        <section id="reviews" class="bg-amber-100/40 py-16 border-y border-amber-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-amber-600 font-bold uppercase text-xs tracking-widest">Обратная связь</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold text-stone-900 mt-1">Отзывы Любителей Выпечки</h2>
+                    <p class="text-stone-600 mt-2">Делитесь своими впечатлениями о нашем сервисе и вкусе пирожков</p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8 items-start">
+                    
+                    <!-- Form to add Review -->
+                    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-amber-200/80 lg:col-span-1">
+                        <h3 class="text-xl font-serif font-bold text-stone-900 mb-4">Оставить отзыв</h3>
+                        <form id="reviewForm" onsubmit="handleAddReview(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Ваше имя</label>
+                                <input type="text" id="reviewName" required placeholder="Например, Сардор" class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Ваша оценка</label>
+                                <div class="flex gap-2 text-2xl text-amber-400 cursor-pointer" id="starRatingInput">
+                                    <i class="fa-solid fa-star transition hover:scale-110" onclick="setRating(1)"></i>
+                                    <i class="fa-solid fa-star transition hover:scale-110" onclick="setRating(2)"></i>
+                                    <i class="fa-solid fa-star transition hover:scale-110" onclick="setRating(3)"></i>
+                                    <i class="fa-solid fa-star transition hover:scale-110" onclick="setRating(4)"></i>
+                                    <i class="fa-solid fa-star transition hover:scale-110" onclick="setRating(5)"></i>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-stone-600 mb-1">Ваш комментарий</label>
+                                <textarea id="reviewComment" rows="3" required placeholder="Расскажите о качестве выпечки и доставке..." class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-stone-900 hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition text-sm shadow-md">
+                                Отправить отзыв
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div class="lg:col-span-2 grid sm:grid-cols-2 gap-4" id="reviewsList">
+                        <!-- Javascript injected reviews -->
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col md:flex-row">
+            
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-white transition shadow">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Image -->
+            <div class="md:w-1/2 h-64 md:h-auto relative bg-stone-100">
+                <img id="modalImg" class="w-full h-full object-cover" src="" alt="">
+                <span id="modalCategoryBadge" class="absolute top-4 left-4 bg-amber-500 text-stone-950 font-bold text-xs px-3 py-1 rounded-full uppercase"></span>
+            </div>
+
+            <!-- Details -->
+            <div class="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+                <div>
+                    <h3 id="modalTitle" class="text-2xl font-serif font-bold text-stone-900 mb-2"></h3>
+                    <p id="modalDesc" class="text-stone-600 text-sm leading-relaxed mb-4"></p>
+                    
+                    <div class="space-y-3 border-y border-stone-100 py-4 mb-4">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-stone-500 font-medium"><i class="fa-solid fa-wheat-awn text-amber-500 mr-1.5"></i> Ингредиенты:</span>
+                            <span id="modalIngredients" class="text-stone-800 font-semibold text-right"></span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-stone-500 font-medium"><i class="fa-solid fa-bolt text-amber-500 mr-1.5"></i> Калорийность:</span>
+                            <span id="modalCalories" class="text-stone-800 font-semibold"></span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-stone-500 font-medium"><i class="fa-solid fa-weight-hanging text-amber-500 mr-1.5"></i> Вес 1 шт:</span>
+                            <span id="modalWeight" class="text-stone-800 font-semibold"></span>
+                        </div>
+                    </div>
+
+                    <!-- Quantity selection for order -->
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold uppercase text-stone-500 mb-2">Количество шт:</label>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center border border-stone-200 rounded-xl overflow-hidden bg-stone-50">
+                                <button onclick="updateModalQty(-1)" class="w-10 h-10 flex items-center justify-center text-stone-600 hover:bg-stone-200 transition font-bold">-</button>
+                                <span id="modalQty" class="w-10 text-center font-bold text-stone-800">1</span>
+                                <button onclick="updateModalQty(1)" class="w-10 h-10 flex items-center justify-center text-stone-600 hover:bg-stone-200 transition font-bold">+</button>
+                            </div>
+                            <div class="text-right flex-1">
+                                <span class="text-xs text-stone-400 block">Итого за выпечку:</span>
+                                <span id="modalTotalPrice" class="text-xl font-bold text-amber-600">0 сум</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="addModalItemToCart()" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cart-plus"></i> Добавить в корзину
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART SLIDE-OVER MODAL -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between shadow-2xl transform transition duration-300">
+            
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-stone-100 flex items-center justify-between bg-amber-50/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping text-amber-600 text-xl"></i>
+                    <h3 class="text-xl font-serif font-bold text-stone-900">Корзина заказов</h3>
+                </div>
+                <button onclick="toggleCartModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-800 transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <!-- Injected via Javascript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyCartState" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+                <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-3xl mb-4">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+                <h4 class="text-lg font-bold text-stone-800">Ваша корзина пуста</h4>
+                <p class="text-stone-500 text-sm mt-1 max-w-xs">Выберите вкусные пирожки из нашего меню, чтобы оформить заказ.</p>
+            </div>
+
+            <!-- Cart Footer / Order Form -->
+            <div id="cartFooter" class="p-6 border-t border-stone-100 bg-stone-50/80 space-y-4">
+                <div class="space-y-1.5 text-sm">
+                    <div class="flex justify-between text-stone-500">
+                        <span>Сумма заказа:</span>
+                        <span id="cartSubtotal" class="font-semibold text-stone-800">0 сум</span>
+                    </div>
+                    <div class="flex justify-between text-stone-500">
+                        <span>Доставка по Ташкенту:</span>
+                        <span id="deliveryFee" class="font-semibold text-emerald-600">15 000 сум</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold text-stone-900 pt-2 border-t border-stone-200">
+                        <span>Итого к оплате:</span>
+                        <span id="cartTotal" class="text-amber-600">0 сум</span>
+                    </div>
+                </div>
+
+                <form onsubmit="handleCheckout(event)" class="space-y-3 pt-2">
+                    <input type="text" id="custName" required placeholder="Ваше имя" class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <input type="tel" id="custPhone" required placeholder="Номер телефона (+998 ...)" class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <input type="text" id="custAddress" required placeholder="Адрес доставки (улица, дом)" class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3.5 rounded-2xl shadow-lg transition text-base">
+                        Оформить заказ
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-stone-900 text-stone-400 py-12 border-t border-stone-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2 text-white font-serif font-bold text-xl">
+                    <i class="fa-solid fa-bread-slice text-amber-500"></i> Горячий Пирожок
+                </div>
+                <p class="text-xs text-stone-400 leading-relaxed">
+                    Пекарня традиционной ручной выпечки. Готовим с любовью и доставляем пышные пирожки горячими!
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Время работы</h4>
+                <p class="text-xs leading-relaxed">Ежедневно: с 08:00 до 21:00</p>
+                <p class="text-xs text-amber-500 mt-1">Выпечка подается свежей каждый час</p>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Контакты</h4>
+                <p class="text-xs"><i class="fa-solid fa-phone text-amber-500 mr-2"></i> +998 (71) 200-00-00</p>
+                <p class="text-xs mt-2"><i class="fa-solid fa-location-dot text-amber-500 mr-2"></i> г. Ташкент, ул. Навои, 14</p>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Мы в соцсетях</h4>
+                <div class="flex gap-3 text-lg">
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-500 hover:text-stone-950 flex items-center justify-center transition"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-500 hover:text-stone-950 flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-stone-800 hover:bg-amber-500 hover:text-stone-950 flex items-center justify-center transition"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-8 border-t border-stone-800/80 text-center text-xs text-stone-500">
+            © 2026 «Горячий Пирожок». Все права защищены. Все цены указаны в узбекских сумах (UZS).
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // PRODUCTS DATA
+        const PRODUCTS = [
+            {
+                id: 1,
+                name: "Пирожок с говядиной и луком",
+                category: "savory",
+                price: 12000,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1621236378699-8597faf6a145?auto=format&fit=crop&w=600&q=80",
+                description: "Классический сытный пирожок с сочной рубленой говядиной, пассерованным луком и щепоткой черного перца.",
+                ingredients: "Мука, говядина, лук, сливочное масло, специи",
+                calories: "280 ккал",
+                weight: "120 г"
+            },
+            {
+                id: 2,
+                name: "Пирожок с спелой вишней",
+                category: "sweet",
+                price: 10000,
+                rating: 5.0,
+                image: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80",
+                description: "Сладкий пирожок с цельными ягодами спелой вишни и легким ароматом ванили.",
+                ingredients: "Мука, вишня, сахар, крахмал, ванилин",
+                calories: "210 ккал",
+                weight: "110 г"
+            },
+            {
+                id: 3,
+                name: "Пирожок с картошкой и укропом",
+                category: "veggie",
+                price: 8000,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80",
+                description: "Нежнейшее картофельное пюре со сливочным маслом и свежим ароматным укропом.",
+                ingredients: "Мука, картофель, укроп, масло сливочное",
+                calories: "190 ккал",
+                weight: "125 г"
+            },
+            {
+                id: 4,
+                name: "Пирожок с капустой и яйцом",
+                category: "veggie",
+                price: 8500,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+                description: "Тушеная молодыми листьями капуста с отварными яйцами и сливочным ароматом.",
+                ingredients: "Мука, капуста, яйцо куриное, сливочное масло",
+                calories: "175 ккал",
+                weight: "120 г"
+            },
+            {
+                id: 5,
+                name: "Пирожок с яблоком и корицей",
+                category: "sweet",
+                price: 9000,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?auto=format&fit=crop&w=600&q=80",
+                description: "Запеченные сладкие яблоки с пряной корицей в мягком дрожжевом тесте.",
+                ingredients: "Мука, яблоки, корица, сахар, сливочное масло",
+                calories: "205 ккал",
+                weight: "115 г"
+            },
+            {
+                id: 6,
+                name: "Пирожок с курицей и грибами",
+                category: "savory",
+                price: 11000,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80",
+                description: "Нежное куриное филе со свежими шампиньонами в сливочном соусе.",
+                ingredients: "Мука, куриное филе, шампиньоны, сливки, лук",
+                calories: "250 ккал",
+                weight: "130 г"
+            },
+            {
+                id: 7,
+                name: "Сочень с нежным творогом",
+                category: "sweet",
+                price: 10000,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80",
+                description: "Рассыпчатое песочное тесто со сладко-ванильной начинкой из домашнего творога.",
+                ingredients: "Мука, творог, сахар, ваниль, яйцо",
+                calories: "260 ккал",
+                weight: "130 г"
+            },
+            {
+                id: 8,
+                name: "Пирожок с зеленью и сыром",
+                category: "veggie",
+                price: 10500,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1626078436892-3e2840a25695?auto=format&fit=crop&w=600&q=80",
+                description: "Ароматная начинка из сулугуни, шпината, укропа и кинзы.",
+                ingredients: "Мука, сыр сулугуни, шпинат, зелень, специи",
+                calories: "230 ккал",
+                weight: "115 г"
+            }
+        ];
+
+        // INITIAL REVIEWS
+        let REVIEWS = [
+            {
+                name: "Малика Рахимова",
+                rating: 5,
+                comment: "Пирожки привези еще горячими! Тесто тонкое, а начинки действительно много. С вишней — просто восторг!"
+            },
+            {
+                name: "Бобур Юлдашев",
+                rating: 5,
+                comment: "Заказываем с коллегами в офис на обед. Мясные пирожки сочные и сытные. Доставка по Ташкенту быстрая."
+            },
+            {
+                name: "Елена В.",
+                rating: 4,
+                comment: "Очень вкусные пирожки с картошкой и укропом, как у бабушки. Спасибо за свежую выпечку!"
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentCategory = 'all';
+        let cart = [];
+        let activeProductForModal = null;
+        let modalQuantity = 1;
+        let selectedUserRating = 5;
+
+        // FORMAT CURRENCY IN UZS
+        function formatUZS(amount) {
+            return amount.toLocaleString('ru-RU') + ' сум';
+        }
+
+        // INIT APP
+        window.onload = function() {
+            renderProducts();
+            renderReviews();
+            updateCartUI();
+        };
+
+        // RENDER PRODUCTS
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            const searchQuery = (document.getElementById('searchInput').value || '').toLowerCase();
+
+            const filtered = PRODUCTS.filter(p => {
+                const matchesCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white rounded-3xl overflow-hidden border border-amber-100 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                    <div>
+                        <!-- Image Container -->
+                        <div class="relative h-48 overflow-hidden bg-stone-100 cursor-pointer" onclick="openProductModal(${p.id})">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur text-stone-800 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                                <i class="fa-solid fa-star text-amber-500 mr-1"></i>${p.rating}
+                            </span>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-5">
+                            <h3 onclick="openProductModal(${p.id})" class="text-lg font-serif font-bold text-stone-900 group-hover:text-amber-600 transition cursor-pointer leading-snug">
+                                ${p.name}
+                            </h3>
+                            <p class="text-stone-500 text-xs mt-2 line-clamp-2 leading-relaxed">
+                                ${p.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Price and Action -->
+                    <div class="px-5 pb-5 pt-2 flex items-center justify-between border-t border-stone-50">
+                        <div>
+                            <span class="text-xs text-stone-400 block">Цена:</span>
+                            <span class="text-lg font-bold text-stone-900">${formatUZS(p.price)}</span>
+                        </div>
+                        <button onclick="quickAddToCart(${p.id})" class="bg-amber-100 hover:bg-amber-500 text-amber-900 hover:text-white w-10 h-10 rounded-2xl flex items-center justify-center transition shadow-sm font-bold">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // FILTER CATEGORIES
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = "cat-btn text-stone-700 hover:text-stone-900 px-5 py-2 rounded-xl text-sm font-semibold transition";
+            });
+            const activeBtn = document.getElementById(`btn-${cat}`);
+            if (activeBtn) {
+                activeBtn.className = "cat-btn bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-sm transition";
+            }
+            renderProducts();
+        }
+
+        function filterProducts() {
+            renderProducts();
+        }
+
+        function syncMobileSearch() {
+            const val = document.getElementById('mobileSearchInput').value;
+            document.getElementById('searchInput').value = val;
+            renderProducts();
+        }
+
+        // MODAL PRODUCT DETAILS
+        function openProductModal(id) {
+            activeProductForModal = PRODUCTS.find(p => p.id === id);
+            if (!activeProductForModal) return;
+
+            modalQuantity = 1;
+            document.getElementById('modalImg').src = activeProductForModal.image;
+            document.getElementById('modalTitle').innerText = activeProductForModal.name;
+            document.getElementById('modalDesc').innerText = activeProductForModal.description;
+            document.getElementById('modalIngredients').innerText = activeProductForModal.ingredients;
+            document.getElementById('modalCalories').innerText = activeProductForModal.calories;
+            document.getElementById('modalWeight').innerText = activeProductForModal.weight;
+            
+            const catMap = { savory: 'Сытный', sweet: 'Сладкий', veggie: 'Вегетарианский' };
+            document.getElementById('modalCategoryBadge').innerText = catMap[activeProductForModal.category] || 'Выпечка';
+
+            updateModalPrice();
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function updateModalQty(delta) {
+            modalQuantity = Math.max(1, modalQuantity + delta);
+            document.getElementById('modalQty').innerText = modalQuantity;
+            updateModalPrice();
+        }
+
+        function updateModalPrice() {
+            if (!activeProductForModal) return;
+            const total = activeProductForModal.price * modalQuantity;
+            document.getElementById('modalTotalPrice').innerText = formatUZS(total);
+        }
+
+        function addModalItemToCart() {
+            if (!activeProductForModal) return;
+            addToCart(activeProductForModal.id, modalQuantity);
+            closeProductModal();
+            toggleCartModal();
+        }
+
+        // CART MANAGEMENT
+        function quickAddToCart(id) {
+            addToCart(id, 1);
+        }
+
+        function addToCart(id, qty = 1) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.quantity += qty;
+            } else {
+                const product = PRODUCTS.find(p => p.id === id);
+                if (product) {
+                    cart.push({ ...product, quantity: qty });
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const countBadge = document.getElementById('cartCountBadge');
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countBadge.innerText = totalCount;
+
+            const container = document.getElementById('cartItemsContainer');
+            const emptyState = document.getElementById('emptyCartState');
+            const footer = document.getElementById('cartFooter');
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                footer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            footer.classList.remove('hidden');
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex items-center gap-4 bg-amber-50/40 p-3 rounded-2xl border border-amber-100">
+                    <img src="${item.image}" class="w-16 h-16 rounded-xl object-cover" alt="">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-stone-800 text-sm truncate">${item.name}</h4>
+                        <span class="text-xs text-amber-600 font-semibold">${formatUZS(item.price)}</span>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateCartQty(${item.id}, -1)" class="w-6 h-6 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-xs font-bold text-stone-600 hover:bg-stone-100">-</button>
+                            <span class="text-xs font-bold text-stone-800">${item.quantity} шт</span>
+                            <button onclick="updateCartQty(${item.id}, 1)" class="w-6 h-6 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-xs font-bold text-stone-600 hover:bg-stone-100">+</button>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-bold text-sm text-stone-900 block">${formatUZS(item.price * item.quantity)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const delivery = 15000;
+            document.getElementById('cartSubtotal').innerText = formatUZS(subtotal);
+            document.getElementById('cartTotal').innerText = formatUZS(subtotal + delivery);
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function handleCheckout(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            
+            alert(`Спасибо за ваш заказ, ${name}! Наш оператор свяжется с вами по номеру ${phone} для подтверждения доставки.`);
+            
+            cart = [];
+            updateCartUI();
+            toggleCartModal();
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custAddress').value = '';
+        }
+
+        // REVIEWS SYSTEM
+        function renderReviews() {
+            const container = document.getElementById('reviewsList');
+            container.innerHTML = REVIEWS.map(r => `
+                <div class="bg-white p-5 rounded-2xl border border-amber-200/60 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-stone-800 text-sm">${r.name}</h4>
+                            <div class="text-amber-400 text-xs">
+                                ${Array(r.rating).fill('<i class="fa-solid fa-star"></i>').join('')}
+                            </div>
+                        </div>
+                        <p class="text-stone-600 text-xs leading-relaxed italic">"${r.comment}"</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setRating(val) {
+            selectedUserRating = val;
+            const stars = document.querySelectorAll('#starRatingInput i');
+            stars.forEach((star, index) => {
+                if (index < val) {
+                    star.className = "fa-solid fa-star transition hover:scale-110";
+                } else {
+                    star.className = "fa-regular fa-star transition hover:scale-110 text-stone-300";
+                }
+            });
+        }
+
+        function handleAddReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const comment = document.getElementById('reviewComment').value;
+
+            REVIEWS.unshift({
+                name: name,
+                rating: selectedUserRating,
+                comment: comment
+            });
+
+            renderReviews();
+            document.getElementById('reviewForm').reset();
+            setRating(5);
+            alert('Спасибо за ваш отзыв! Он успешно опубликован.');
+        }
+    </script>
+</body>
+</html>
